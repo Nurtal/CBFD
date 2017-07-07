@@ -1,89 +1,56 @@
-# where am i 
-info = Sys.info()
-os = info[["sysname"]]
-data_file_name = "undef"
-login = info[["login"]]
+##----------------------------------##
+## Perform and Display PCA analysis ##
+##----------------------------------##
 
 
-#load data
+## Load data on Windows
 if(identical(os, "Windows")){
-  #-Windows
-  data_file_name = paste("C:\\Users\\", login, "\\Desktop\\Nathan\\SpellCraft\\CBFD\\cb_data.csv", sep="")
-  
-}else{
-  ##-Linux
-  ## not functionnal for now
-  data <- read.csv("/home/foulquier/Bureau/SpellCraft/WorkSpace/SCRIPTS/data/clinical_data_phase_1.csv", stringsAsFactors=TRUE)
+  ## output file name
+  all_data_file = paste("C:\\Users\\", login, "\\Desktop\\Nathan\\SpellCraft\\CBFD\\data\\cb_data_complete.csv", sep="")
+  absolute_data_file = paste("C:\\Users\\", login, "\\Desktop\\Nathan\\SpellCraft\\CBFD\\data\\cb_data_absolute_complete_log_scaled.csv", sep="")
+  proportion_data_file = paste("C:\\Users\\", login, "\\Desktop\\Nathan\\SpellCraft\\CBFD\\data\\cb_data_proportion_complete.csv", sep="")
 }
+all_data <- read.csv(all_data_file, stringsAsFactors=FALSE, sep=",")
+absolute_data <- read.csv(absolute_data_file, stringsAsFactors=TRUE, sep=",")
+proportion_data <- read.csv(proportion_data_file, stringsAsFactors=TRUE, sep=",")
 
-## Load Data
-data <- read.csv(data_file_name, stringsAsFactors=TRUE, sep=",")
+## Deal with the ID
+drops <- c("identifiant")
+all_data <- all_data[ , !(names(all_data) %in% drops)]
+absolute_data <- absolute_data[ , !(names(absolute_data) %in% drops)]
+proportion_data <- proportion_data[ , !(names(proportion_data) %in% drops)]
 
+## Perform PCA
+all.pca <- prcomp(all_data)
+summary(all.pca)
 
+absolute.pca <- prcomp(absolute_data)
+summary(absolute.pca)
 
-##------------##
-## Imputation ##
-##------------##
-library(mice)
-md.pattern(data)
+proportion.pca <- prcomp(proportion_data)
+summary(proportion.pca)
 
-library(VIM)
-aggr_plot <- aggr(data, col=c('navyblue','red'), numbers=TRUE, sortVars=TRUE, labels=names(data), cex.axis=.7, gap=3, ylab=c("Histogram of missing data","Pattern"))
-
-tempData <- mice(data,m=5,maxit=50,meth='pmm',seed=500)
-summary(tempData)
-
-
-##-------------------------##
-## Scaling data before PCA ##
-##-------------------------##
-
-## Pareto scaling
-library(MetabolAnalyze)
-data_scaled <- scaling(data, type = "pareto")
-data_scaled$X.Clinical.Sampling.OMICID <- data$X.Clinical.Sampling.OMICID
-data_scaled$X.Clinical.Diagnosis.DISEASE <- data$X.Clinical.Diagnosis.DISEASE
-
-## log transform 
-log.ir <- log(data_scaled[, 3:length(data_scaled)])
-ir.labels <- data$X.Clinical.Diagnosis.DISEASE 
-
-##-------------##
-## Perform PCA ##
-##-------------##
-
-## apply PCA
-ir.pca <- prcomp(log.ir)
-summary(ir.pca)
-round(cor(log.ir[,3:length(log.ir)]), 2)
-
-## PCA on unscaled data
-ir.pca <- prcomp(data)
-summary(ir.pca)
-round(cor(log.ir[,3:length(log.ir)]), 2)
 
 
 ##-----------------##
 ## Display Results ##
 ##-----------------##
-
-## Plot stuff
 library(ggfortify)
-plot(ir.pca, type = "l")
 
-autoplot(ir.pca, data = data, colour = 'X.Clinical.Diagnosis.DISEASE',
+## Plot components information
+plot(all.pca, type = "l")
+plot(absolute.pca, type = "l")
+plot(proportion.pca, type = "l")
+
+## Plot space representation
+autoplot(all.pca, data = all_data,
          loadings = TRUE, loadings.colour = 'blue',
          loadings.label = TRUE, loadings.label.size = 3)
 
+autoplot(absolute.pca, data = absolute_data,
+         loadings = TRUE, loadings.colour = 'blue',
+         loadings.label = TRUE, loadings.label.size = 3)
 
-
-## TEST
-library(pca3d)
-pca <- prcomp(log.ir, scale.=TRUE) # real
-gr <- factor(data$X.Clinical.Diagnosis.DISEASE) # real
-summary(gr)
-pca3d(pca, group=gr)
-
-## same stuff with ellipses
-pca3d(pca, group=gr, show.ellipses=TRUE,
-      ellipse.ci=0.75, show.plane=FALSE)
+autoplot(proportion.pca, data = proportion_data,
+         loadings = TRUE, loadings.colour = 'blue',
+         loadings.label = TRUE, loadings.label.size = 3)
