@@ -3,6 +3,7 @@ TRASH FUNCTIONS
 """
 
 import math
+import random
 
 def log_scaled(input_file):
 	"""
@@ -53,5 +54,40 @@ def log_scaled(input_file):
 	output_data.close()
 
 
+def add_random_diagnostic(input_file, output_file):
+	"""
+	-> Add a column to the data from the input_file and write
+	   the new data in output_file
+	-> The new data is a "disease suggestion", i.e a random proposition
+	   for a diagnostic between two possibility:
+	   		- CONTROL
+	   		- SICK
+	"""
+
+	input_data = open(input_file, "r")
+	output_data = open(output_file, "w")
+
+	cmpt = 0
+	for line in input_data:
+		line = line.split("\n")
+		line = line[0]		
+		line_to_write = ""
+		if(cmpt == 0):
+			line_to_write = line+",\"DISEASE_SUGGESTION\""
+		else:
+			suggestions = ["CONTROL", "SICK", "UNDEF"]
+			disease_suggestion = suggestions[random.randint(0,2)]
+			line_to_write = line+",\""+str(disease_suggestion)+"\""		
+		output_data.write(line_to_write+"\n")
+
+		cmpt +=1
+
+	output_data.close()
+	input_data.close()
+
+
+
 ### TEST SPACE ###
 log_scaled("data/cb_data_proportion_complete.csv")
+add_random_diagnostic("data/cb_data_proportion_complete.csv", "data/cb_data_proportion_complete_individu_test.csv")
+
