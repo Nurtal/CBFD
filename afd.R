@@ -25,7 +25,7 @@ input_data = read.csv(input_data_file, stringsAsFactors=TRUE, sep=",")
 library(MASS)
 
 r <- lda(formula = DISEASE_SUGGESTION ~ ., 
-         data = input_data[,2:18])
+         data = input_data[,2:ncol(input_data)])
 
 prop = r$svd^2/sum(r$svd^2)
 
