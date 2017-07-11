@@ -28,9 +28,6 @@ r <- lda(formula = DISEASE_SUGGESTION ~ .,
          data = input_data[,2:18])
 
 prop = r$svd^2/sum(r$svd^2)
-plot(r)
-prop
-
 
 ##----------------##
 ## Write log file ##
