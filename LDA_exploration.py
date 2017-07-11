@@ -508,12 +508,15 @@ def run_exploration():
 	"""
 
 	## Fix parameters
-	max_number_of_generation = 7
-	population_size = 10
-	good_selection_number = 4
-	bad_selection_number = 2
+	max_number_of_generation = 200
+	population_size = 25
+	good_selection_number = 11
+	bad_selection_number = 4
 	mutation_rate = 15
 	log_file_name = "data/log/scores.log"
+
+	## really important, model for the individual
+	input_data_file = "data/cb_data_absolute_complete_log_scaled.csv"
 	
 	## Generate first population
 	## clean all the folder
@@ -521,7 +524,7 @@ def run_exploration():
 	log_files = glob.glob("data/log/*")
 	for log in log_files:
 		os.remove(log)
-	generate_random_population(population_size, "data/cb_data_absolute_complete_log_scaled.csv", "data/population")
+	generate_random_population(population_size, input_data_file, "data/population")
 
 	## Evolution
 	for x in xrange(1, max_number_of_generation+1):
