@@ -2,6 +2,8 @@
 ## AFD TESTS IN PROGRESS ##
 ##-----------------------##
 
+## turn of warnings
+options(warn=-1)
 
 ## where am i 
 info = Sys.info()
