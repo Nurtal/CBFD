@@ -59,9 +59,10 @@ def add_random_diagnostic(input_file, output_file):
 	-> Add a column to the data from the input_file and write
 	   the new data in output_file
 	-> The new data is a "disease suggestion", i.e a random proposition
-	   for a diagnostic between two possibility:
+	   for a diagnostic between three possibility:
 	   		- CONTROL
 	   		- SICK
+	   		- UNDEF
 	"""
 
 	input_data = open(input_file, "r")
@@ -86,8 +87,43 @@ def add_random_diagnostic(input_file, output_file):
 	input_data.close()
 
 
+def centre_reduire_transformation(data_file_name):
+	"""
+	IN PROGRESS
+	"""
+
+	## Create the data array
+	data_file = open(data_file_name, "r")
+	index_to_variables = {}
+	variable_to_values = {}
+	cmpt = 0
+	for line in data_file:
+		line = line.split("\n")
+		line = line[0]
+		line_in_array = line.split(",")
+		if(cmpt == 0):
+			index = 0
+			for variable in line_in_array:
+				index_to_variables[index] = variable
+				variable_to_values[variable] = []
+				index += 1
+		else:
+			index = 0
+			for scalar in line_in_array[1:]: # not taking the first row, stuff from R
+				variable_to_values[index_to_variables[index]].append(scalar)
+				index+=1
+		cmpt += 1
+	data_file.close()
+
+	## Get the transformation for each variable except the ID
+	for X in variable_to_values.values():
+		sklearn.preprocessing.scale(X, axis=0, with_mean=True, with_std=True, copy=True)
+
+
+
+
 
 ### TEST SPACE ###
 log_scaled("data/cb_data_proportion_complete.csv")
 add_random_diagnostic("data/cb_data_proportion_complete.csv", "data/cb_data_proportion_complete_individu_test.csv")
-
+centre_reduire_transformation("data/cb_data_proportion_complete.csv")
