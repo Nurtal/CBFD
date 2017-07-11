@@ -9,16 +9,17 @@ import shutil
 import os
 import glob
 import heapq
-
+import sys
 
 def create_individual(input_file, output_file):
 	"""
 	-> Add a column to the data from the input_file and write
 	   the new data in output_file
 	-> The new data is a "disease suggestion", i.e a random proposition
-	   for a diagnostic between two possibility:
+	   for a diagnostic between three possibility:
 	   		- CONTROL
 	   		- SICK
+	   		- UNDEF
 	"""
 
 	input_data = open(input_file, "r")
@@ -71,7 +72,7 @@ def score(individual):
 	shutil.copy(individual, "data/exploration/LDA_input.csv")
 
 	## Run the R script
-	os.system("Rscript afd.R")
+	os.system("Rscript afd.R > trash.txt")
 
 	## Read the log file
 	log_data = open("data/exploration/LDA_output.log", "r")
@@ -104,6 +105,7 @@ def select_best_individual(population_folder, size):
 
 	## Compute score for each individu
 	## save image in data/images folder
+	progress = 0
 	for ind in list_of_ind:
 		ind_in_array = ind.split(".")
 		ind_in_array = ind_in_array[0]
@@ -112,6 +114,19 @@ def select_best_individual(population_folder, size):
 		indPath_to_score[ind] = float(score(ind))
 		image_destination_file = "data/images/LDA_ind_"+str(ind_number)+".png"
 		shutil.copy("data/exploration/LDA_image.png", image_destination_file)
+
+		## Display progress bar
+		# progress bar
+		step = float((100/float(len(list_of_ind))))
+		progress += 1
+		progress_perc = progress*step
+		factor = math.ceil((progress_perc/2))
+		progress_bar = "#" * int(factor)
+		progress_bar += "-" * int(50 - factor)
+		display_line = "["+str(ind_number)+"]|"+progress_bar+"|"+str(progress)+"/"+str(len(list_of_ind))+"|"
+		sys.stdout.write("\r%d%%" % progress_perc)
+		sys.stdout.write(display_line)
+		sys.stdout.flush()
 
 	## Select the best individu
 	list_of_selected = []
@@ -137,6 +152,52 @@ def select_best_individual(population_folder, size):
 	log_data.close()
 
 	return list_of_selected
+
+
+
+
+def complete_log_file(generation, log_file_name):
+	"""
+	-> complete the general log file log_file_name with
+	   the data of the current population
+	-> generation is an int, the number of the current generation
+	"""
+
+	## test if file already exist
+	if(os.path.isfile(log_file_name)):
+
+		## write generation log data into general log file
+		generation_log_file = open("data/population/data.log")
+		for line in generation_log_file:
+			line = line.split("\n")
+			line = line[0]
+			line_in_array = line.split(",")
+			line_to_write = ""
+			ind_name = line_in_array[0].split("\\")
+			ind_name = ind_name[-1]
+			line_to_write = str(generation)+","+str(ind_name)+","+str(line_in_array[-1])
+			log_file = open(log_file_name, "a")
+			log_file.write(line_to_write+"\n")
+			log_file.close()
+		generation_log_file.close()
+
+	else:
+		## write generation log data into general log file
+		generation_log_file = open("data/population/data.log")
+		for line in generation_log_file:
+			line = line.split("\n")
+			line = line[0]
+			line_in_array = line.split(",")
+			line_to_write = ""
+			ind_name = line_in_array[0].split("\\")
+			ind_name = ind_name[-1]
+			line_to_write = str(generation)+","+str(ind_name)+","+str(line_in_array[-1])
+			log_file = open(log_file_name, "w")
+			log_file.write(line_to_write+"\n")
+			log_file.close()
+		generation_log_file.close()
+
+
 
 
 
@@ -410,57 +471,97 @@ def create_children():
 
 
 
-
-
-def create_children_1(parents, population):
+def assemble_new_population():
 	"""
-	-> crossover between parents
-	to create children
-	-> parents are a list of individuals
-	-> population is a list of Individuals (include parents)
-	-> return a list of individuals
+	-> clean the population folder and
+	   copy the individual in parents and
+	   children folder to the population folder
 	"""
-	parents_length = len(parents)
-	desired_length = len(population) - parents_length
-	children = []
-	child_id = get_youngest_id_in_population(population) + 1
-	while len(children) < desired_length:
-		male = random.randint(0, parents_length-1)
-		female = random.randint(0, parents_length-1)
-		if male != female:
-			male = parents[male]
-			female = parents[female]
 
-			parameters = male._intervals_to_variables.keys()
-			half = len(parameters) / 2
+	## Clean the output folder
+	clean("population")
 
-			# child creation
-			child = Individual()
-			child._id = child_id
+	## Gather the parents and children
+	parents = glob.glob("data/parents/*.csv")
+	for ind in parents:
+		destination = ind.split(".")
+		destination = destination[0]
+		destination = destination.split("\\")
+		destination = destination[-1]
+		destination = "data/population/"+destination+".csv"
+		shutil.copy(ind, destination)
+	children = glob.glob("data/children/*.csv")
+	for ind in children:
+		destination = ind.split(".")
+		destination = destination[0]
+		destination = destination.split("\\")
+		destination = destination[-1]
+		destination = "data/population/"+destination+".csv"
+		shutil.copy(ind, destination)
 
-			# legacy from father
-			for param in parameters[half:]:
-				child._intervals_to_variables[param] = male._intervals_to_variables[param]
-			
-			# legacy from mother
-			for param in parameters[:half]:
-				child._intervals_to_variables[param] = female._intervals_to_variables[param]
 
-			children.append(child)
+def run_exploration():
+	"""
+	-> The main procedure, fonctionnal but room for improvements
 
-		child_id += 1
+	IN PROGRESS
+	"""
 
-		return children
+	## Fix parameters
+	max_number_of_generation = 7
+	population_size = 10
+	good_selection_number = 4
+	bad_selection_number = 2
+	mutation_rate = 15
+	log_file_name = "data/log/scores.log"
+	
+	## Generate first population
+	## clean all the folder
+	clean("all")
+	log_files = glob.glob("data/log/*")
+	for log in log_files:
+		os.remove(log)
+	generate_random_population(population_size, "data/cb_data_absolute_complete_log_scaled.csv", "data/population")
+
+	## Evolution
+	for x in xrange(1, max_number_of_generation+1):
+		print "[*] ======== Generation "+str(x) +" ======== [*]"
+
+		## Select the best candidates
+		print "[+] Scoring the candidate"
+		select_best_individual("data/population", good_selection_number)
+
+		## Write results in log file
+		complete_log_file(x, log_file_name)
+
+		## Select the bad candidates
+		select_bad_individual(bad_selection_number)
+
+		## assemble the parents in "parents" folder
+		assemble_parents()
+		print "\n[+] Parents selected"
+
+		## Mutation of the parents before reproduction
+		print "[+] Perform mutation on parents"
+		mutation(mutation_rate)
+
+		## Reproduction, generate children
+		print "[+] Create Children"
+		create_children()
+
+		## Assemble new population
+		print "[+] Assemble new population"
+		assemble_new_population()
+
+		## Cleaning
+		print "[+] Cleaning"
+		clean("parents")
+		clean("children")
+		clean("selected")
+		clean("bas_selection")
+
 
 
 
 ##TEST SPACE##
-
-
-clean("all")
-generate_random_population(10, "data/cb_data_absolute_complete_log_scaled.csv", "data/population")
-select_best_individual("data/population", 4)
-select_bad_individual(2)
-assemble_parents()
-mutation(90)
-create_children()
+run_exploration()

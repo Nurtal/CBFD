@@ -22,7 +22,7 @@ input_data = read.csv(input_data_file, stringsAsFactors=TRUE, sep=",")
 ##---------------##
 ## Run LDA (AFD) ##
 ##---------------##
-require(MASS)
+library(MASS)
 
 r <- lda(formula = DISEASE_SUGGESTION ~ ., 
          data = input_data[,2:18])
