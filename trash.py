@@ -87,9 +87,14 @@ def add_random_diagnostic(input_file, output_file):
 	input_data.close()
 
 
-def centre_reduire_transformation(data_file_name):
+from sklearn import preprocessing
+
+
+
+def centre_reduire_transformation(data_file_name, output_file_name):
 	"""
-	IN PROGRESS
+	-> scale the data in the data_file_name and write the
+	   corresponding output in output_file_name
 	"""
 
 	## Create the data array
@@ -110,15 +115,42 @@ def centre_reduire_transformation(data_file_name):
 		else:
 			index = 0
 			for scalar in line_in_array[1:]: # not taking the first row, stuff from R
+				scalar = scalar.replace("\"", "")
 				variable_to_values[index_to_variables[index]].append(scalar)
 				index+=1
 		cmpt += 1
 	data_file.close()
 
 	## Get the transformation for each variable except the ID
-	for X in variable_to_values.values():
-		sklearn.preprocessing.scale(X, axis=0, with_mean=True, with_std=True, copy=True)
+	for var in variable_to_values.keys():
+		if(var != "\"identifiant\""):
+			X = variable_to_values[var]
+			X_scaled = preprocessing.scale(X, axis=0, with_mean=True, with_std=True, copy=True)
+			variable_to_values[var] = X_scaled
 
+	## Re-write file with new data
+	output_data = open(output_file_name, "w")
+
+	## write header
+	header = ""
+	for pos in index_to_variables.keys():
+		var = index_to_variables[pos]
+		header += str(var)+","
+
+	header = header[:-1]
+	output_data.write(header+"\n")
+
+	# Write line
+	for number_of_line in xrange(0, len(variable_to_values["\"identifiant\""])):
+		line_to_write = ""
+		for pos in index_to_variables.keys():
+			var = index_to_variables[pos]
+			line_to_write += str(variable_to_values[var][number_of_line]) + ","
+		
+		line_to_write = line_to_write[:-1]
+		output_data.write(line_to_write+"\n")
+
+	output_data.close()
 
 
 
@@ -126,4 +158,4 @@ def centre_reduire_transformation(data_file_name):
 ### TEST SPACE ###
 log_scaled("data/cb_data_proportion_complete.csv")
 add_random_diagnostic("data/cb_data_proportion_complete.csv", "data/cb_data_proportion_complete_individu_test.csv")
-centre_reduire_transformation("data/cb_data_proportion_complete.csv")
+centre_reduire_transformation("data/cb_data_proportion_complete.csv", "data/cb_data_proportion_complete_scaled.csv")
