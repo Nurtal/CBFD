@@ -5,6 +5,9 @@ TRASH FUNCTIONS
 import math
 import random
 import itertools
+import glob
+import shutil
+import os
 
 def log_scaled(input_file):
 	"""
@@ -230,10 +233,47 @@ def generate_proposition_file():
 
 
 
+def pca_exploration():
+	"""
+	IN PROGRESS
+	"""
+
+	## get list of files
+	proposition_files = glob.glob("data/subsets/*.csv")
+
+	for proposition in proposition_files:
+
+		## prepare data for R pca Script
+		shutil.copy(proposition, "data/pca_exploration/pca_exploration_input.csv")
+
+		## Run the R script
+		os.system("Rscript pca_exploration.R > pca_trash.txt")
+
+		## Save the output
+		destination_file_1 = proposition.split("\\")
+		destination_file_1 = destination_file_1[-1]
+		destination_file_1 = destination_file_1.split(".")
+		destination_file_1 = destination_file_1[0]
+		destination_file_1 = destination_file_1 + "_explain_variance.png"
+		destination_file_1 = "data/pca_exploration_results/"+destination_file_1
+
+		destination_file_2 = proposition.split("\\")
+		destination_file_2 = destination_file_2[-1]
+		destination_file_2 = destination_file_2.split(".")
+		destination_file_2 = destination_file_2[0]
+		destination_file_2 = destination_file_2 + "_2d_representation.png"
+		destination_file_2 = "data/pca_exploration_results/"+destination_file_2
+
+		shutil.copy("data/pca_exploration/explain_variance.png", destination_file_1)
+		shutil.copy("data/pca_exploration/2d_representation.png", destination_file_2)
+
+
+
 
 ### TEST SPACE ###
-log_scaled("data/cb_data_proportion_complete.csv")
-add_random_diagnostic("data/cb_data_proportion_complete.csv", "data/cb_data_proportion_complete_individu_test.csv")
-centre_reduire_transformation("data/cb_data_complete.csv", "data/cb_data_complete_scaled.csv")
+#log_scaled("data/cb_data_proportion_complete.csv")
+#add_random_diagnostic("data/cb_data_proportion_complete.csv", "data/cb_data_proportion_complete_individu_test.csv")
+#centre_reduire_transformation("data/cb_data_complete.csv", "data/cb_data_complete_scaled.csv")
 
-generate_proposition_file()
+#generate_proposition_file()
+pca_exploration()
