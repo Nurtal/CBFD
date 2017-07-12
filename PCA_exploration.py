@@ -1,6 +1,7 @@
 import os
 import shutil
 import itertools
+import glob
 
 
 def generate_proposition_file():
@@ -118,6 +119,6 @@ def pca_exploration():
 
 ### MAIN ###
 print "[*]--- GENERATE PROPOSITION ---[*]"
-generate_proposition_file()
+#generate_proposition_file()
 print "[*]--- COMPUTE PROPOSITION ---[*]"
 pca_exploration()
