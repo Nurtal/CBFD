@@ -9,6 +9,8 @@ import glob
 import shutil
 import os
 
+from scipy.ndimage.filters import gaussian_filter
+
 def log_scaled(input_file):
 	"""
 	-> Take input file as input,
@@ -268,6 +270,80 @@ def pca_exploration():
 		shutil.copy("data/pca_exploration/2d_representation.png", destination_file_2)
 
 
+import numpy as np
+import pylab
+import mahotas as mh
+from PIL import Image
+
+def image_analysis(image_file_name):
+	"""
+	-> Detect the number of apparent cluster in the
+	   image image_file_name.
+	-> preprocess the image to hav only the grid 
+	   (calibrated for the figures of pca exploration procedure)
+	-> return a dict with number and sizes of the clusters
+
+	-> TODO:
+			- test with an image containing at least 2 clusters
+	"""
+
+	## Init variable
+	results = {}
+
+	## Preprocessing the image
+	## Extract the interesting zone
+	im = Image.open(image_file_name)
+	crop_rectangle = (40, 10, 470, 445)
+	cropped_im = im.crop(crop_rectangle)
+	blurred = gaussian_filter(cropped_im, sigma=7)
+	T = mh.thresholding.otsu(blurred)
+	
+	## Extract number of cluster
+	## Extract size of cluster
+	labeled,nr_objects = mh.label(blurred > T)
+	sizes = mh.labeled.labeled_size(labeled)
+	results["number_of_clusters"] = int(nr_objects)
+	results["sizes"] = sizes[0]
+
+	## Show stuff
+	#pylab.imshow(labeled)
+	#pylab.jet()
+	#pylab.show()
+
+	return results	
+
+
+def graphical_analyze():
+	"""
+	-> Perform graphical analysis of pca figures
+	   store results in a log file
+
+	-> TODO :
+			- complete documentation
+	"""
+
+	## Init log file
+	log_file = open("data/graphical_analyze.log", "w")
+	log_file.write("suggestion_id,nb_clsuters,size_clusters\n")
+
+	## get all the files to analyse
+	files_to_process = glob.glob("data/pca_exploration_results/*2d_representation.png")
+	for image_file_name in files_to_process:
+		
+		## Get the id
+		suggestion_id = image_file_name.split("\\")
+		suggestion_id = suggestion_id[-1]
+		suggestion_id = suggestion_id.split("_")
+		suggestion_id = suggestion_id[1]
+
+		## Perform the analysis
+		analysis_results = image_analysis(image_file_name)
+
+		## Write results in a log file
+		log_file.write(str(suggestion_id)+","+str(analysis_results["number_of_clusters"])+","+str(analysis_results["sizes"])+"\n")
+
+	log_file.close()
+
 
 
 ### TEST SPACE ###
@@ -276,4 +352,5 @@ def pca_exploration():
 #centre_reduire_transformation("data/cb_data_complete.csv", "data/cb_data_complete_scaled.csv")
 
 #generate_proposition_file()
-pca_exploration()
+#pca_exploration()
+#graphical_analyze()
