@@ -462,8 +462,17 @@ def write_manifeste():
 
 def write_settings(input_file_name, scaling):
 	"""
-	IN PROGRESS
+	-> Write a settings file with information
+	   on the pca exploration:
+	   	- input_file_name the name of the file used for as input 
+	   	  for the pca exploration
+	    - number of variables: all variables in the file except the identifiant column
+	    - variables : name of variables in the file (except the identifiant)
+	    - scaling : a string, information on the data scaling
 	"""
+
+	## prompt message
+	print "[+] Write Settings"
 
 	## Open file
 	log_file = open("data/settings.log", "w")
@@ -474,13 +483,13 @@ def write_settings(input_file_name, scaling):
 	log_file.write("##------------------------------##\n")
 	
 	## Input file
-	log_file.write("> input file: "+str(input_file_name)+"\n")
+	log_file.write("> input file:"+str(input_file_name)+"\n")
 
 	## Number of variables
 	variables_list = []
 	cmpt = 0
 	input_data = open(input_file_name, "r")
-	for line input_data:
+	for line in input_data:
 		if(cmpt == 0):
 			line = line.split("\n")
 			line = line[0]
@@ -500,11 +509,12 @@ def write_settings(input_file_name, scaling):
 	log_file.write("> Variables list:"+line_to_write+"\n")
 
 	## Scaling
-	log_file.write("> scaling: "+str(scaling)+"\n")
+	log_file.write("> scaling:"+str(scaling)+"\n")
 
 	## Close file
 	log_file.close()
 
+	print "[*] Settings Done"
 
 
 
@@ -522,4 +532,4 @@ def write_settings(input_file_name, scaling):
 #log_analyse()
 #write_manifeste()
 
-write_settings()
+write_settings("data/cb_data_absolute_complete_scaled.csv", "normalize")
