@@ -518,6 +518,28 @@ def write_settings(input_file_name, scaling):
 
 
 
+def cleaner():
+	"""
+	-> remove csv files in data/subsets folder
+	-> remove the png files in data/pca_exploration_results folder
+	-> remove the png files in data/good_candidates folder 
+	-> use this function at the end of a pca exploration, 
+	   after saving the results in a log file
+	"""
+
+	## list files to remove
+	files_to_remove = glob.glob("data/subsets/*.csv")
+	image_to_remove_1 = glob.glob("data/pca_exploration_results/*.png")
+	image_to_remove_2 = glob.glob("data/good_candidates/*.png")
+
+	## delete files
+	for f in files_to_remove:
+		os.remove(f)
+	for f in image_to_remove_1:
+		os.remove(f)
+	for f in image_to_remove_2:
+		os.remove(f)
+
 
 
 
@@ -531,5 +553,6 @@ def write_settings(input_file_name, scaling):
 #graphical_analyze()
 #log_analyse()
 #write_manifeste()
+#write_settings("data/cb_data_absolute_complete_scaled.csv", "normalize")
 
-write_settings("data/cb_data_absolute_complete_scaled.csv", "normalize")
+cleaner()

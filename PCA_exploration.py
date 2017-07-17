@@ -5,6 +5,30 @@ import glob
 import log_management
 
 
+def cleaner():
+	"""
+	-> remove csv files in data/subsets folder
+	-> remove the png files in data/pca_exploration_results folder
+	-> remove the png files in data/good_candidates folder 
+	-> use this function at the end of a pca exploration, 
+	   after saving the results in a log file
+	"""
+
+	## list files to remove
+	files_to_remove = glob.glob("data/subsets/*.csv")
+	image_to_remove_1 = glob.glob("data/pca_exploration_results/*.png")
+	image_to_remove_2 = glob.glob("data/good_candidates/*.png")
+
+	## delete files
+	for f in files_to_remove:
+		os.remove(f)
+	for f in image_to_remove_1:
+		os.remove(f)
+	for f in image_to_remove_2:
+		os.remove(f)
+
+
+
 def generate_proposition_file(input_data_file):
 	"""
 	-> Generate proposition file for pca & unsupervised exploration
@@ -159,6 +183,8 @@ def graphical_analyze():
 
 
 ### MAIN ###
+print "[*]--- PREPARE DATA ---[*]"
+cleaner()
 input_file_name = "data/cb_data_absolute_complete_scaled.csv"
 scaling = "normalized"
 log_management.write_settings(input_file_name, scaling)
@@ -171,3 +197,5 @@ graphical_analyze()
 print "[*]--- GENERATE LOG FILES ---[*]"
 log_management.log_analyse()
 log_management.write_manifeste()
+print "[*]--- CLEANING FOLDERS ---[*]"
+cleaner()
