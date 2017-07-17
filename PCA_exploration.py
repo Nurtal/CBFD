@@ -117,6 +117,42 @@ def pca_exploration():
 		shutil.copy("data/pca_exploration/2d_representation.png", destination_file_2)
 
 
+
+def graphical_analyze():
+	"""
+	-> Perform graphical analysis of pca figures
+	   store results in a log file
+
+	-> TODO :
+			- complete documentation
+	"""
+
+	## Init log file
+	log_file = open("data/graphical_analyze.log", "w")
+	log_file.write("suggestion_id,nb_clsuters,size_clusters\n")
+
+	## get all the files to analyse
+	files_to_process = glob.glob("data/pca_exploration_results/*2d_representation.png")
+	for image_file_name in files_to_process:
+		
+		## Get the id
+		suggestion_id = image_file_name.split("\\")
+		suggestion_id = suggestion_id[-1]
+		suggestion_id = suggestion_id.split("_")
+		suggestion_id = suggestion_id[1]
+
+		## Just for print
+		print "[+] Procesing case "+str(suggestion_id)
+
+		## Perform the analysis
+		analysis_results = image_analysis(image_file_name)
+
+		## Write results in a log file
+		log_file.write(str(suggestion_id)+","+str(analysis_results["number_of_clusters"])+","+str(analysis_results["sizes"])+"\n")
+
+	log_file.close()
+
+
 ### MAIN ###
 print "[*]--- GENERATE PROPOSITION ---[*]"
 generate_proposition_file()
