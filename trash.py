@@ -336,6 +336,9 @@ def graphical_analyze():
 		suggestion_id = suggestion_id.split("_")
 		suggestion_id = suggestion_id[1]
 
+		## Just for print
+		print "[+] Procesing case "+str(suggestion_id)
+
 		## Perform the analysis
 		analysis_results = image_analysis(image_file_name)
 
@@ -343,6 +346,95 @@ def graphical_analyze():
 		log_file.write(str(suggestion_id)+","+str(analysis_results["number_of_clusters"])+","+str(analysis_results["sizes"])+"\n")
 
 	log_file.close()
+
+
+def log_analyse():
+	"""
+	-> Analyse the log file created by the
+	   graphical_analyze() function.
+	-> copy images of the good candidates (i.e at least 2 clusters
+	   detected on the graphe) from the pca_exploration_results folder
+       to the good_candidates fodler.
+	"""
+
+	## Read log file
+	## Identify the good candidates
+	log_file = open("data/graphical_analyze.log", "r")
+	cmpt = 0
+	good_candidate = 0
+	good_candidate_list = []	
+	for line in log_file:
+		line = line.split("\n")
+		line = line[0]
+		line_in_array = line.split(",")
+		
+		case_id = line_in_array[0]
+		cluster_number = line_in_array[1]
+		cluster_size = line_in_array[2]
+
+		if(cmpt != 0):
+			if(int(cluster_number) > 1):
+				print "[+] Find a good candidate "+str(case_id)
+				good_candidate_list.append(case_id)
+				good_candidate += 1
+		cmpt += 1
+	log_file.close()
+	print "[*] Find "+str(good_candidate)
+
+	## Copy good candidates images to
+	## A new results folder
+	for candidate in good_candidate_list:
+		source_file = "data/pca_exploration_results/proposition_"+str(candidate)+"_2d_representation.png"
+		destination_file = "data/good_candidates/"+str(candidate)+".png"
+		shutil.copy(source_file, destination_file)
+
+	print "[*] Files saved"
+
+
+
+def write_manifeste():
+	"""
+	IN PROGRESS
+	"""
+
+	## List of files to check
+	candidates_list = glob.glob("data/subsets/*.csv")
+	
+	## Scan the files
+	for candidate in candidates_list:
+		
+		line_to_write = ""
+
+		candidate_id = candidate.split("\\")
+		candidate_id = candidate_id[-1]
+		candidate_id = candidate_id.split("_")
+		candidate_id = candidate_id[1]
+		candidate_id = candidate_id.split(".")
+		candidate_id = candidate_id[0]
+
+		data_file = open(candidate, "r")
+		cmpt = 0
+		variables = ""
+		for line in data_file:
+			if(cmpt == 0):
+				line = line.split("\n")
+				line = line[0]
+				line_in_array = line.split(",")
+
+				for var in line_in_array:
+					if(str(var) != "\"identifiant\""):
+						variables += str(var)+";"
+				variables = variables[:-1]
+
+			cmpt += 1
+
+		line_to_write += str(candidate_id)+","+str(variables)
+		print line_to_write
+
+		data_file.close()
+
+
+
 
 
 
@@ -354,3 +446,5 @@ def graphical_analyze():
 #generate_proposition_file()
 #pca_exploration()
 #graphical_analyze()
+#log_analyse()
+write_manifeste()
