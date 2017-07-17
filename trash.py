@@ -459,6 +459,58 @@ def write_manifeste():
 
 	print "\n[*] Manifeste Done"
 
+
+def write_settings(input_file_name, scaling):
+	"""
+	IN PROGRESS
+	"""
+
+	## Open file
+	log_file = open("data/settings.log", "w")
+	
+	## Write header
+	log_file.write("##------------------------------##\n")
+	log_file.write("## SETTINGS FOR PCA EXPLORATION ##\n")
+	log_file.write("##------------------------------##\n")
+	
+	## Input file
+	log_file.write("> input file: "+str(input_file_name)+"\n")
+
+	## Number of variables
+	variables_list = []
+	cmpt = 0
+	input_data = open(input_file_name, "r")
+	for line input_data:
+		if(cmpt == 0):
+			line = line.split("\n")
+			line = line[0]
+			line_in_array = line.split(",")
+			for var in line_in_array:
+				if(str(var) != "\"identifiant\""):
+					variables_list.append(var)
+		cmpt += 1
+	input_data.close()
+	log_file.write("> Number of variables:"+str(len(variables_list))+"\n")
+
+	## Variables pool
+	line_to_write = ""
+	for var in variables_list:
+		line_to_write += str(var) +","
+	line_to_write = line_to_write[:-1]
+	log_file.write("> Variables list:"+line_to_write+"\n")
+
+	## Scaling
+	log_file.write("> scaling: "+str(scaling)+"\n")
+
+	## Close file
+	log_file.close()
+
+
+
+
+
+
+
 ### TEST SPACE ###
 #log_scaled("data/cb_data_proportion_complete.csv")
 #add_random_diagnostic("data/cb_data_proportion_complete.csv", "data/cb_data_proportion_complete_individu_test.csv")
@@ -468,4 +520,6 @@ def write_manifeste():
 #pca_exploration()
 #graphical_analyze()
 #log_analyse()
-write_manifeste()
+#write_manifeste()
+
+write_settings()
