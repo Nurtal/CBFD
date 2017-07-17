@@ -2,11 +2,16 @@ import os
 import shutil
 import itertools
 import glob
+import log_management
 
 
-def generate_proposition_file():
+def generate_proposition_file(input_data_file):
 	"""
 	-> Generate proposition file for pca & unsupervised exploration
+	
+	-> default file:
+		data/cb_data_absolute_complete_scaled.csv
+
 	TODO:
 		- complete the documentation
 	"""
@@ -16,7 +21,7 @@ def generate_proposition_file():
 	index_to_variables = {}
 	variable_to_values = {}
 	variables = []
-	data_file = open("data/cb_data_absolute_complete_scaled.csv", "r")
+	data_file = open(input_data_file, "r")
 	cmpt = 0
 	for line in data_file:
 		line = line.split("\n")
@@ -142,7 +147,7 @@ def graphical_analyze():
 		suggestion_id = suggestion_id[1]
 
 		## Just for print
-		print "[+] Procesing case "+str(suggestion_id)
+		print "[+] Processing case "+str(suggestion_id)
 
 		## Perform the analysis
 		analysis_results = image_analysis(image_file_name)
@@ -154,7 +159,15 @@ def graphical_analyze():
 
 
 ### MAIN ###
+input_file_name = "data/cb_data_absolute_complete_scaled.csv"
+scaling = "normalized"
+log_management.write_settings(input_file_name, scaling)
 print "[*]--- GENERATE PROPOSITION ---[*]"
 generate_proposition_file()
 print "[*]--- COMPUTE PROPOSITION ---[*]"
 pca_exploration()
+print "[*]--- EXTRACT INFORMATIONS ---[*]"
+graphical_analyze()
+print "[*]--- GENERATE LOG FILES ---[*]"
+log_management.log_analyse()
+log_management.write_manifeste()
