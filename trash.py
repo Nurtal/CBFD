@@ -8,6 +8,7 @@ import itertools
 import glob
 import shutil
 import os
+import sys
 
 from scipy.ndimage.filters import gaussian_filter
 
@@ -394,13 +395,23 @@ def log_analyse():
 
 def write_manifeste():
 	"""
-	IN PROGRESS
+	-> write manifeste.log file, a csv file
+	with the id of the case/suggestion and the variables
+	involved in the case/suggestion.
 	"""
+
+	## Init log file
+	
+	print "[+] Writing Manifeste"
+	log_file = open("data/manifeste.log", "w")
+	log_file.write("ID,variables\n")
+	log_file.close()
 
 	## List of files to check
 	candidates_list = glob.glob("data/subsets/*.csv")
 	
 	## Scan the files
+	progress = 0
 	for candidate in candidates_list:
 		
 		line_to_write = ""
@@ -425,18 +436,28 @@ def write_manifeste():
 					if(str(var) != "\"identifiant\""):
 						variables += str(var)+";"
 				variables = variables[:-1]
-
 			cmpt += 1
 
+		log_file = open("data/manifeste.log", "a")
 		line_to_write += str(candidate_id)+","+str(variables)
-		print line_to_write
-
+		log_file.write(line_to_write+"\n")
+		log_file.close()
 		data_file.close()
 
+		## Display progress bar
+		# progress bar
+		step = float((100/float(len(candidates_list))))
+		progress += 1
+		progress_perc = progress*step
+		factor = math.ceil((progress_perc/2))
+		progress_bar = "#" * int(factor)
+		progress_bar += "-" * int(50 - factor)
+		display_line = "["+str(candidate_id)+"]|"+progress_bar+"|"+str(progress)+"/"+str(len(candidates_list))+"|"
+		sys.stdout.write("\r%d%%" % progress_perc)
+		sys.stdout.write(display_line)
+		sys.stdout.flush()
 
-
-
-
+	print "\n[*] Manifeste Done"
 
 ### TEST SPACE ###
 #log_scaled("data/cb_data_proportion_complete.csv")
