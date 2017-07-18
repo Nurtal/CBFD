@@ -11,6 +11,7 @@ import os
 import sys
 
 from scipy.ndimage.filters import gaussian_filter
+import matplotlib.pyplot as plt
 
 def log_scaled(input_file):
 	"""
@@ -671,7 +672,11 @@ def rebuild_file_from_id(settings_file, manifeste_file, proposition_id):
 
 def plot_variable_frequencies(path_to_save_folder):
 	"""
-	IN PROGRESS
+	-> plot the count of variables retains in the good candidates
+	   proposition
+
+	TODO:
+		Complete doc
 	"""
 
 	## Get the list of proposition id in suggestion space
@@ -686,9 +691,9 @@ def plot_variable_frequencies(path_to_save_folder):
 		solution_id_list.append(solution_id)
 
 	## Get the list of variables present in the solution space
+	## and the associated count
 	variables_to_count = {}
 	manifeste_file_name = str(path_to_save_folder)+"/manifeste.log"
-
 	manifeste_data = open(manifeste_file_name, "r")
 	for line in manifeste_data:
 		line = line.split("\n")
@@ -703,10 +708,14 @@ def plot_variable_frequencies(path_to_save_folder):
 				for var in variables_from_solution:
 					if(var not in variables_to_count.keys()):
 						variables_to_count[var] = 0
-
-
-
+					else:
+						variables_to_count[var] += 1
 	manifeste_data.close()
+
+	## Plot the results
+	plt.bar(range(len(variables_to_count)), variables_to_count.values(), align='center')
+	plt.xticks(range(len(variables_to_count)), variables_to_count.keys(), rotation=20)
+	plt.show()
 
 
 
