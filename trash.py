@@ -577,14 +577,23 @@ def save_run():
 
 
 
-def rebuild_file_from_list(manifeste_file, id):
+def rebuild_file_from_id(manifeste_file, proposition_id):
 	"""
 	IN PROGRESS
 	"""
 
-	## Retrieve the variable list associated with and id
-	
+	## Retrieve the variable list associated with an id
+	variables_list = []
+	manifeste_data = open(manifeste_file, "r")
+	for line in manifeste_data:
+		line = line.split("\n")
+		line = line[0]
+		line_in_array = line.split(",")
+		if(str(proposition_id) == line_in_array[0]):
+			variables_list = line_in_array[1].split(";")
+	manifeste_data.close()
 
+	##
 
 
 
@@ -604,4 +613,4 @@ def rebuild_file_from_list(manifeste_file, id):
 #cleaner()
 #save_run()
 
-rebuild_file_from_list()
+rebuild_file_from_id("data/manifeste.log", 100)
