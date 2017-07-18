@@ -579,8 +579,13 @@ def save_run():
 
 def rebuild_file_from_id(settings_file, manifeste_file, proposition_id):
 	"""
-	IN PROGRESS
+	-> Rebuild a proposition file
+	-> settings_file is the emplacement of the settings.log file
+	-> manifeste_file is the emplacement of the manifeste.log file
+	-> proposition_id is the id of the proposition to rebuild
 	"""
+
+	print "[+] Build file from proposition "+str(proposition_id)
 
 	## Retrieve the variable list associated with an id
 	variables_list = []
@@ -594,19 +599,73 @@ def rebuild_file_from_id(settings_file, manifeste_file, proposition_id):
 	manifeste_data.close()
 
 	## Get the name of the input file used for exploration
+	input_data_file = ""
 	settings_data = open(settings_file, "r")
 	for line in settings_data:
 		line = line.split("\n")
 		line = line[0]
 		line_in_array = line.split(":")
-
-		print line_in_array
-
-
-
+		if(line_in_array[0] == str("> input file")):
+			input_data_file = line_in_array[1]
 	settings_data.close()
 
+	## get the list of variables
+	## store data in dict
+	index_to_variables = {}
+	variable_to_values = {}
+	variables = []
+	data_file = open(input_data_file, "r")
+	cmpt = 0
+	for line in data_file:
+		line = line.split("\n")
+		line = line[0]
+		line_in_array = line.split(",")
+		if(cmpt == 0):
+			variables = line_in_array
+			index = 0
+			for var in line_in_array:
+				index_to_variables[index] = var
+				variable_to_values[var] = []
+				index += 1
+		else:
+			index = 0
+			for scalar in line_in_array:
+				scalar = scalar.replace("\"", "")
+				variable_to_values[index_to_variables[index]].append(scalar)
+				index+=1
 
+		cmpt += 1
+	data_file.close()
+	variables.remove("\"identifiant\"")
+
+	## Reconstruct the file
+	file_name = "data/cb_reconstruction_"+str(proposition_id)+".csv"
+			
+	## Write the proposition file
+	proposition_file = open(file_name, "w")
+			
+	## write the header
+	header = ""
+	header += "\"identifiant\""+","
+	for prop_var in variables_list:
+		header += str(prop_var)+","
+	header = header[:-1]
+	proposition_file.write(header+"\n")
+
+	## write the lines
+	for number_of_line in xrange(0, len(variable_to_values["\"identifiant\""])):
+		line_to_write = ""
+		line_to_write += str(variable_to_values["\"identifiant\""][number_of_line]) + ","
+		for pos in index_to_variables.keys():
+			var = index_to_variables[pos]
+			if(var in variables_list):
+				line_to_write += str(variable_to_values[var][number_of_line]) + ","
+		
+		line_to_write = line_to_write[:-1]
+		proposition_file.write(line_to_write+"\n")
+	proposition_file.close()
+
+	print "[*] Generation completed"
 
 
 ### TEST SPACE ###
@@ -624,4 +683,4 @@ def rebuild_file_from_id(settings_file, manifeste_file, proposition_id):
 #cleaner()
 #save_run()
 
-rebuild_file_from_id("data/settings.log", "data/manifeste.log", 100)
+#rebuild_file_from_id("data/settings.log", "data/manifeste.log", 100)
