@@ -577,7 +577,7 @@ def save_run():
 
 
 
-def rebuild_file_from_id(manifeste_file, proposition_id):
+def rebuild_file_from_id(settings_file, manifeste_file, proposition_id):
 	"""
 	IN PROGRESS
 	"""
@@ -593,7 +593,18 @@ def rebuild_file_from_id(manifeste_file, proposition_id):
 			variables_list = line_in_array[1].split(";")
 	manifeste_data.close()
 
-	##
+	## Get the name of the input file used for exploration
+	settings_data = open(settings_file, "r")
+	for line in settings_data:
+		line = line.split("\n")
+		line = line[0]
+		line_in_array = line.split(":")
+
+		print line_in_array
+
+
+
+	settings_data.close()
 
 
 
@@ -613,4 +624,4 @@ def rebuild_file_from_id(manifeste_file, proposition_id):
 #cleaner()
 #save_run()
 
-rebuild_file_from_id("data/manifeste.log", 100)
+rebuild_file_from_id("data/settings.log", "data/manifeste.log", 100)
