@@ -3,6 +3,8 @@ import shutil
 import itertools
 import glob
 import log_management
+import math
+import sys
 
 
 def cleaner():
@@ -14,18 +16,66 @@ def cleaner():
 	   after saving the results in a log file
 	"""
 
+	## display something
+	print "[+] Cleaning folders"
+
 	## list files to remove
 	files_to_remove = glob.glob("data/subsets/*.csv")
 	image_to_remove_1 = glob.glob("data/pca_exploration_results/*.png")
 	image_to_remove_2 = glob.glob("data/good_candidates/*.png")
 
 	## delete files
+	progress = 0
 	for f in files_to_remove:
 		os.remove(f)
+
+		## Display progress bar
+		step = float((100/float(len(files_to_remove))))
+		progress += 1
+		progress_perc = progress*step
+		factor = math.ceil((progress_perc/2))
+		progress_bar = "#" * int(factor)
+		progress_bar += "-" * int(50 - factor)
+		display_line = "[SUBSETS]|"+progress_bar+"|"+str(progress)+"/"+str(len(files_to_remove))+"|"
+		sys.stdout.write("\r%d%%" % progress_perc)
+		sys.stdout.write(display_line)
+		sys.stdout.flush()
+
+	progress = 0
 	for f in image_to_remove_1:
 		os.remove(f)
+
+		## Display progress bar
+		step = float((100/float(len(image_to_remove_1))))
+		progress += 1
+		progress_perc = progress*step
+		factor = math.ceil((progress_perc/2))
+		progress_bar = "#" * int(factor)
+		progress_bar += "-" * int(50 - factor)
+		display_line = "[EXPLORATION]|"+progress_bar+"|"+str(progress)+"/"+str(len(image_to_remove_1))+"|"
+		sys.stdout.write("\r%d%%" % progress_perc)
+		sys.stdout.write(display_line)
+		sys.stdout.flush()
+
+	progress = 0
 	for f in image_to_remove_2:
 		os.remove(f)
+
+		## Display progress bar
+		step = float((100/float(len(image_to_remove_2))))
+		progress += 1
+		progress_perc = progress*step
+		factor = math.ceil((progress_perc/2))
+		progress_bar = "#" * int(factor)
+		progress_bar += "-" * int(50 - factor)
+		display_line = "[CANDIDATES]|"+progress_bar+"|"+str(progress)+"/"+str(len(image_to_remove_2))+"|"
+		sys.stdout.write("\r%d%%" % progress_perc)
+		sys.stdout.write(display_line)
+		sys.stdout.flush()
+	
+
+	## display something
+	print "\n[*] Cleaning Done"
 
 
 
@@ -185,11 +235,11 @@ def graphical_analyze():
 ### MAIN ###
 print "[*]--- PREPARE DATA ---[*]"
 cleaner()
-input_file_name = "data/cb_data_absolute_complete_scaled.csv"
-scaling = "normalized"
+input_file_name = "data/cb_data_absolute_complete_log_scaled.csv"
+scaling = "log scaled, absolute data"
 log_management.write_settings(input_file_name, scaling)
 print "[*]--- GENERATE PROPOSITION ---[*]"
-generate_proposition_file()
+generate_proposition_file(input_file_name)
 print "[*]--- COMPUTE PROPOSITION ---[*]"
 pca_exploration()
 print "[*]--- EXTRACT INFORMATIONS ---[*]"
