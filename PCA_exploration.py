@@ -244,13 +244,14 @@ def save_run():
 	print "[+] Save data"
 
 	## Get the id of the run to save
-	new_id = -1
+	new_id = 0
 	list_of_id = []
 	for folder in os.listdir("save"):
 		folder_in_array = folder.split("_")
 		run_number = int(folder_in_array[-1])
 		list_of_id.append(run_number)
-	new_id = max(list_of_id)+1
+	if(len(list_of_id) > 0):
+		new_id = max(list_of_id)+1
 
 	## Create the run folder
 	save_folder = "save/RUN_"+str(new_id)
