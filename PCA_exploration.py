@@ -232,6 +232,41 @@ def graphical_analyze():
 	log_file.close()
 
 
+def save_run():
+	"""
+	-> copy good candidates folder and a few files:
+		- data/graphical_analyze.log
+		- data/manifeste.log
+		- data/settings.log
+	"""
+
+	## Display something
+	print "[+] Save data"
+
+	## Get the id of the run to save
+	new_id = -1
+	list_of_id = []
+	for folder in os.listdir("save"):
+		folder_in_array = folder.split("_")
+		run_number = int(folder_in_array[-1])
+		list_of_id.append(run_number)
+	new_id = max(list_of_id)+1
+
+	## Create the run folder
+	save_folder = "save/RUN_"+str(new_id)
+	os.mkdir(save_folder)
+
+	## Save the informations
+	shutil.copytree("data/good_candidates", save_folder+"/good_candidates")
+	shutil.copy("data/graphical_analyze.log", save_folder+"/graphical_analyze.log")
+	shutil.copy("data/manifeste.log", save_folder+"/manifeste.log")
+	shutil.copy("data/settings.log", save_folder+"/settings.log")
+
+	## Display something
+	print "[*] Data saved"
+
+
+
 ### MAIN ###
 print "[*]--- PREPARE DATA ---[*]"
 cleaner()
@@ -247,5 +282,7 @@ graphical_analyze()
 print "[*]--- GENERATE LOG FILES ---[*]"
 log_management.log_analyse()
 log_management.write_manifeste()
+print "[*]--- SAVE RESULTS ---[*]"
+save_run()
 print "[*]--- CLEANING FOLDERS ---[*]"
 cleaner()
