@@ -576,6 +576,19 @@ def save_run():
 	print "[*] Data saved"
 
 
+
+def rebuild_file_from_list(manifeste_file, id):
+	"""
+	IN PROGRESS
+	"""
+
+	## Retrieve the variable list associated with and id
+	
+
+
+
+
+
 ### TEST SPACE ###
 #log_scaled("data/cb_data_proportion_complete.csv")
 #add_random_diagnostic("data/cb_data_proportion_complete.csv", "data/cb_data_proportion_complete_individu_test.csv")
@@ -589,4 +602,6 @@ def save_run():
 #write_settings("data/cb_data_absolute_complete_scaled.csv", "normalize")
 
 #cleaner()
-save_run()
+#save_run()
+
+rebuild_file_from_list()
