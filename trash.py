@@ -668,6 +668,19 @@ def rebuild_file_from_id(settings_file, manifeste_file, proposition_id):
 	print "[*] Generation completed"
 
 
+
+def plot_variable_frequencies():
+	"""
+	IN PROGRESS
+	"""
+
+	## Get the list of variables present in the solution space
+	## -> get the list of proposition id in suggestion space
+	solution_files = glob.glob("save/RUN_1/good_candidates/*.png")
+	print solution_files
+
+
+
 ### TEST SPACE ###
 #log_scaled("data/cb_data_proportion_complete.csv")
 #add_random_diagnostic("data/cb_data_proportion_complete.csv", "data/cb_data_proportion_complete_individu_test.csv")
@@ -683,4 +696,6 @@ def rebuild_file_from_id(settings_file, manifeste_file, proposition_id):
 #cleaner()
 #save_run()
 
-#rebuild_file_from_id("data/settings.log", "data/manifeste.log", 100)
+#rebuild_file_from_id("save/RUN_1/settings.log", "save/RUN_1/manifeste.log", 20160)
+
+plot_variable_frequencies()
