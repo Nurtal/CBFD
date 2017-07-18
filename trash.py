@@ -669,15 +669,45 @@ def rebuild_file_from_id(settings_file, manifeste_file, proposition_id):
 
 
 
-def plot_variable_frequencies():
+def plot_variable_frequencies(path_to_save_folder):
 	"""
 	IN PROGRESS
 	"""
 
+	## Get the list of proposition id in suggestion space
+	solution_id_list = []
+	solution_files = glob.glob(str(path_to_save_folder)+"/good_candidates/*.png")
+	for solution in solution_files:
+		solution_id = solution.split("\\")
+		solution_id = solution_id[-1]
+		solution_id = solution_id.split(".")
+		solution_id = solution_id[0]
+		
+		solution_id_list.append(solution_id)
+
 	## Get the list of variables present in the solution space
-	## -> get the list of proposition id in suggestion space
-	solution_files = glob.glob("save/RUN_1/good_candidates/*.png")
-	print solution_files
+	variables_to_count = {}
+	manifeste_file_name = str(path_to_save_folder)+"/manifeste.log"
+
+	manifeste_data = open(manifeste_file_name, "r")
+	for line in manifeste_data:
+		line = line.split("\n")
+		line = line[0]
+		line_in_array = line.split(",")
+
+		for solution in solution_id_list:
+			if(str(solution) == str(line_in_array[0])):
+
+				variables_from_solution = line_in_array[1].split(";")
+
+				for var in variables_from_solution:
+					if(var not in variables_to_count.keys()):
+						variables_to_count[var] = 0
+
+
+
+	manifeste_data.close()
+
 
 
 
@@ -698,4 +728,4 @@ def plot_variable_frequencies():
 
 #rebuild_file_from_id("save/RUN_1/settings.log", "save/RUN_1/manifeste.log", 20160)
 
-plot_variable_frequencies()
+plot_variable_frequencies("save/RUN_1")
