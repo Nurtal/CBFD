@@ -720,6 +720,60 @@ def plot_variable_frequencies(path_to_save_folder):
 
 
 
+def independant_progress_bar():
+	"""
+	-> Run a progress bar to check the
+	   progression of the pca exploration
+
+	TODO:
+		- dix display problem
+	"""
+
+	## Get the list of variables
+	variables_list = []
+	settings_data = open("data/settings.log", "r")
+	for line in settings_data:
+		line = line.split("\n")
+		line = line[0]
+		line_in_array = line.split(":")
+
+		if(str(line_in_array[0]) == "> Variables list"):
+			variables_list = line_in_array[1].split(",")
+	settings_data.close()
+
+	## Compute the number of possible combinations
+	total_number_of_combinations = 0
+	tupleLen = 4
+	while(tupleLen < len(variables_list)):
+		for h in itertools.combinations(variables_list, tupleLen):
+			total_number_of_combinations += 1
+		tupleLen += 1
+
+	#files_in_folder = glob.glob("data/pca_exploration_results/*2d_representation.png")
+	files_in_folder = []
+	progress = 0
+	while(len(files_in_folder) < total_number_of_combinations):
+
+		current_files_in_folder = glob.glob("data/pca_exploration_results/*2d_representation.png")
+
+		if(len(current_files_in_folder) > len(files_in_folder)):
+
+			## Display the progress bar
+			step = float((100/float(total_number_of_combinations)))
+			progress += len(current_files_in_folder) - len(files_in_folder)
+			progress_perc = progress*step
+			factor = math.ceil((progress_perc/2))
+			progress_bar = "#" * int(factor)
+			progress_bar += "-" * int(50 - factor)
+			display_line = "[EXPLORATION]|"+progress_bar+"|"+str(progress)+"/"+str(total_number_of_combinations)+"|"
+			sys.stdout.write("\r%d%%" % progress_perc)
+			sys.stdout.write(display_line)
+			sys.stdout.flush()
+
+		files_in_folder = current_files_in_folder
+
+
+
 ### TEST SPACE ###
 #log_scaled("data/cb_data_proportion_complete.csv")
 #add_random_diagnostic("data/cb_data_proportion_complete.csv", "data/cb_data_proportion_complete_individu_test.csv")
@@ -736,5 +790,5 @@ def plot_variable_frequencies(path_to_save_folder):
 #save_run()
 
 #rebuild_file_from_id("save/RUN_1/settings.log", "save/RUN_1/manifeste.log", 20160)
-
-plot_variable_frequencies("save/RUN_1")
+#plot_variable_frequencies("save/RUN_1")
+independant_progress_bar()
