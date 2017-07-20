@@ -157,7 +157,7 @@ def write_settings(input_file_name, scaling):
 			line = line[0]
 			line_in_array = line.split(",")
 			for var in line_in_array:
-				if(str(var) != "\"identifiant\""):
+				if(str(var) != "\"identifiant\"" and str(var) != "identifiant"):
 					variables_list.append(var)
 		cmpt += 1
 	input_data.close()
