@@ -795,6 +795,20 @@ def get_cross_variables():
 	precisesads_data.close()
 
 	## Get all variables from CB
+	cb_variables = []
+	cmpt = 0
+	cb_data = open("data/cb_data.csv", "r")
+	for line in cb_data:
+		if(cmpt == 0):
+			line = line.replace("\n", "")
+			line_in_array = line.split(",")
+			for var in line_in_array:
+				if(var != "identifiant" and var not in cb_variables):
+					cb_variables.append(var)
+		cmpt += 1
+	cb_data.close()
+
+	## Identify commun variables
 	
 
 ### TEST SPACE ###
