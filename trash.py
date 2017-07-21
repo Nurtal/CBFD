@@ -773,6 +773,29 @@ def independant_progress_bar():
 		files_in_folder = current_files_in_folder
 
 
+def get_cross_variables():
+	"""
+	IN PROGRESS
+	""" 
+
+	## Get all Flow Cytometry variables from PRECISADS
+	precisesads_variables = []
+	cmpt = 0
+	precisesads_data = open("transmart_23_05_2017_PHASE_I&II.txt", "r")
+	for line in precisesads_data:
+
+		if(cmpt == 0):
+			line = line.replace("\n", "")
+			line_in_array = line.split("\t")
+			for var in line_in_array:
+				var_in_array = var.split("\\")
+				if("Flow cytometry" in var_in_array and str(var_in_array[-1]) not in precisesads_variables):
+					precisesads_variables.append(str(var_in_array[-1]))
+		cmpt += 1
+	precisesads_data.close()
+
+	## Get all variables from CB
+	
 
 ### TEST SPACE ###
 #log_scaled("data/cb_data_proportion_complete.csv")
@@ -791,4 +814,5 @@ def independant_progress_bar():
 
 #rebuild_file_from_id("save/RUN_1/settings.log", "save/RUN_1/manifeste.log", 20160)
 #plot_variable_frequencies("save/RUN_1")
-independant_progress_bar()
+#independant_progress_bar()
+get_cross_variables()
