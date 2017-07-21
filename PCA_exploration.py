@@ -117,7 +117,10 @@ def generate_proposition_file(input_data_file):
 
 		cmpt += 1
 	data_file.close()
-	variables.remove("\"identifiant\"")
+	try:
+		variables.remove("\"identifiant\"")
+	except:
+		variables.remove("identifiant")
 
 	cmpt = 0
 	tupleLen = 4
@@ -407,17 +410,15 @@ def rebuild_file_from_id(settings_file, manifeste_file, proposition_id):
 
 
 ### MAIN ###
-"""
 print "[*]--- PREPARE DATA ---[*]"
 cleaner()
-input_file_name = "data/cb_data_absolute_complete_log_scaled.csv"
-scaling = "log scaled, absolute data"
+input_file_name = "data/cb_data_absolute_complete_special.csv"
+scaling = "No scaling, absolute data"
 log_management.write_settings(input_file_name, scaling)
 print "[*]--- GENERATE PROPOSITION ---[*]"
 generate_proposition_file(input_file_name)
 print "[*]--- COMPUTE PROPOSITION ---[*]"
 pca_exploration()
-"""
 print "[*]--- EXTRACT INFORMATIONS ---[*]"
 graphical_analyze()
 print "[*]--- GENERATE LOG FILES ---[*]"
