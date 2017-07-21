@@ -637,7 +637,13 @@ def rebuild_file_from_id(settings_file, manifeste_file, proposition_id):
 
 		cmpt += 1
 	data_file.close()
-	variables.remove("\"identifiant\"")
+	identifiant_label = ""
+	try:
+		variables.remove("\"identifiant\"")
+		identifiant_label = "\"identifiant\""
+	except:
+		variables.remove("identifiant")
+		identifiant_label = "identifiant"
 
 	## Reconstruct the file
 	file_name = "data/cb_reconstruction_"+str(proposition_id)+".csv"
@@ -654,9 +660,9 @@ def rebuild_file_from_id(settings_file, manifeste_file, proposition_id):
 	proposition_file.write(header+"\n")
 
 	## write the lines
-	for number_of_line in xrange(0, len(variable_to_values["\"identifiant\""])):
+	for number_of_line in xrange(0, len(variable_to_values[str(identifiant_label)])):
 		line_to_write = ""
-		line_to_write += str(variable_to_values["\"identifiant\""][number_of_line]) + ","
+		line_to_write += str(variable_to_values[str(identifiant_label)][number_of_line]) + ","
 		for pos in index_to_variables.keys():
 			var = index_to_variables[pos]
 			if(var in variables_list):
@@ -809,6 +815,8 @@ def get_cross_variables():
 	cb_data.close()
 
 	## Identify commun variables
+	for var in precisesads_variables:
+		print var
 	
 
 ### TEST SPACE ###
@@ -826,7 +834,7 @@ def get_cross_variables():
 #cleaner()
 #save_run()
 
-#rebuild_file_from_id("save/RUN_1/settings.log", "save/RUN_1/manifeste.log", 20160)
-#plot_variable_frequencies("save/RUN_1")
+#rebuild_file_from_id("save/RUN_3/settings.log", "save/RUN_3/manifeste.log", 1045)
+#plot_variable_frequencies("save/RUN_3")
 #independant_progress_bar()
-get_cross_variables()
+#get_cross_variables()
