@@ -823,7 +823,7 @@ def get_number_of_good_candidates(good_candidates_folder):
 	"""
 	IN PROGRESS
 	"""
-	number_of_good_canditates = len(glob.glob(good_candidates_folder+"*.csv"))
+	number_of_good_canditates = len(glob.glob(good_candidates_folder+"*.png"))
 	return number_of_good_canditates
 
 
@@ -847,3 +847,6 @@ def get_number_of_good_candidates(good_candidates_folder):
 #plot_variable_frequencies("save/RUN_3")
 #independant_progress_bar()
 #get_cross_variables()
+
+p = get_number_of_good_candidates("save/RUN_3/good_candidates/")
+print p
