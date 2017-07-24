@@ -819,6 +819,15 @@ def get_cross_variables():
 		print var
 	
 
+def get_number_of_good_candidates(good_candidates_folder):
+	"""
+	IN PROGRESS
+	"""
+	number_of_good_canditates = len(glob.glob(good_candidates_folder+"*.csv"))
+	return number_of_good_canditates
+
+
+
 ### TEST SPACE ###
 #log_scaled("data/cb_data_proportion_complete.csv")
 #add_random_diagnostic("data/cb_data_proportion_complete.csv", "data/cb_data_proportion_complete_individu_test.csv")
