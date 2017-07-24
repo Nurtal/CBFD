@@ -779,6 +779,18 @@ def independant_progress_bar():
 		files_in_folder = current_files_in_folder
 
 
+
+def get_number_of_good_candidates(good_candidates_folder):
+	"""
+	Return the number of png files found
+	in good_candidates_folder
+	"""
+	number_of_good_canditates = len(glob.glob(good_candidates_folder+"*.png"))
+	return number_of_good_canditates
+
+
+
+
 def get_cross_variables():
 	"""
 	IN PROGRESS
@@ -814,17 +826,14 @@ def get_cross_variables():
 		cmpt += 1
 	cb_data.close()
 
+
+	print "[+] "+str(len(precisesads_variables)) +" variables from PRECISESADS"
+	print "[+] "+str(len(cb_variables)) +" variables from CB"
+
 	## Identify commun variables
 	for var in precisesads_variables:
 		print var
-	
 
-def get_number_of_good_candidates(good_candidates_folder):
-	"""
-	IN PROGRESS
-	"""
-	number_of_good_canditates = len(glob.glob(good_candidates_folder+"*.png"))
-	return number_of_good_canditates
 
 
 
@@ -846,7 +855,7 @@ def get_number_of_good_candidates(good_candidates_folder):
 #rebuild_file_from_id("save/RUN_3/settings.log", "save/RUN_3/manifeste.log", 1045)
 #plot_variable_frequencies("save/RUN_3")
 #independant_progress_bar()
-#get_cross_variables()
+get_cross_variables()
 
-p = get_number_of_good_candidates("save/RUN_3/good_candidates/")
-print p
+#p = get_number_of_good_candidates("save/RUN_3/good_candidates/")
+#print p
