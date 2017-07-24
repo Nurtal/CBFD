@@ -839,7 +839,9 @@ def get_cross_variables():
 
 def get_distance_between_cluster():
 	"""
-	IN PROGRESS
+	Exemple for the distance between object computation.
+	TODO:
+		- scavange the all
 	"""
 	# import the necessary packages
 	from scipy.spatial import distance as dist
@@ -855,7 +857,7 @@ def get_distance_between_cluster():
 
 
 	# load the image, convert it to grayscale, and blur it slightly
-	image = cv2.imread("distance_between_objects_reference.jpg")
+	image = cv2.imread("41.png")
 	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 	gray = cv2.GaussianBlur(gray, (7, 7), 0)
 
@@ -943,6 +945,7 @@ def get_distance_between_cluster():
 			# show the output image
 			cv2.imshow("Image", orig)
 			cv2.waitKey(0)
+
 
 
 ### TEST SPACE ###
